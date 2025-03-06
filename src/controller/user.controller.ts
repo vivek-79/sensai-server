@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { getAiInsight } from "../gemini";
 import { insightPrompt } from "../gemini/prompts";
-import client from "../middleware/redis";
+// import client from "../middleware/redis";
 
 
 
@@ -17,12 +17,12 @@ export const getUser = async (req:any,res:Response)=>{
    
     try {
 
-        const cachedUser = await client.get(`user:${id}`)
+        // const cachedUser = await client.get(`user:${id}`)
 
-        if(cachedUser){
-            res.status(200).json({ user:JSON.parse(cachedUser), message: 'User Data Fetched (from cache)', success: true })
-            return;
-        }
+        // if(cachedUser){
+        //     res.status(200).json({ user:JSON.parse(cachedUser), message: 'User Data Fetched (from cache)', success: true })
+        //     return;
+        // }
         const user = await prisma.user.findUnique({
             where:{id:id},
             select:{
@@ -36,7 +36,7 @@ export const getUser = async (req:any,res:Response)=>{
             return;
         }
 
-        await client.setEx(`user:${id}`,3600,JSON.stringify(user));
+        // await client.setEx(`user:${id}`,3600,JSON.stringify(user));
         res.status(200).json({user,message:'User Data Fetched',success:true})
         return;
     } catch (error:any) {
@@ -124,12 +124,12 @@ export const getIndustryInsights = async(req:Request,res:Response)=>{
    try {
 
 
-    const cachedInsight = await client.get(`insight:${industry}`)
+    // const cachedInsight = await client.get(`insight:${industry}`)
 
-    if(cachedInsight){
-        res.status(200).json({ insights:JSON.parse(cachedInsight), message: "Insights fetched successfully", success: true });
-        return;
-    };
+    // if(cachedInsight){
+    //     res.status(200).json({ insights:JSON.parse(cachedInsight), message: "Insights fetched successfully", success: true });
+    //     return;
+    // };
 
 
     let insights = await prisma.industryInsight.findUnique({
@@ -154,7 +154,7 @@ export const getIndustryInsights = async(req:Request,res:Response)=>{
         })
     }
 
-    await client.setEx(`insight:${industry}`,3600,JSON.stringify(insights));
+    // await client.setEx(`insight:${industry}`,3600,JSON.stringify(insights));
      res.status(200).json({insights,message:"Insights fetched successfully",success:true});
      return
    } catch (error) {

@@ -2,7 +2,7 @@ import { Response } from "express";
 import prisma from "../lib/prisma";
 import { resumeImmprove } from "../gemini/prompts";
 import { getAiInsight } from "../gemini";
-import client from "../middleware/redis";
+// import client from "../middleware/redis";
 
 
 
@@ -12,7 +12,6 @@ export const saveResume = async(req:any,res:Response)=>{
 
     const { id } = req.userId;
     const { previewContent} = req.body
-    console.log('resume=>', previewContent)
 
    
 
@@ -47,12 +46,12 @@ export const getResume = async(req:any,res:Response)=>{
 
     try {
 
-        const cachedResume = await client.get(`Resume:${id}`)
+        // const cachedResume = await client.get(`Resume:${id}`)
 
-        if (cachedResume) {
-            res.status(200).json({ resume: JSON.parse(cachedResume), message: "Assessments fetched successfully", success: true });
-            return;
-        }
+        // if (cachedResume) {
+        //     res.status(200).json({ resume: JSON.parse(cachedResume), message: "Assessments fetched successfully", success: true });
+        //     return;
+        // }
         const resume = await prisma.resume.findUnique({
             where:{
                 userId:id,
@@ -62,7 +61,7 @@ export const getResume = async(req:any,res:Response)=>{
 
         if ( resume ){
 
-            await client.setEx(`Resume:${id}`, 600, JSON.stringify(resume))
+            // await client.setEx(`Resume:${id}`, 600, JSON.stringify(resume))
             res.status(200).json({ resume, message: 'Resume fetched suuccessfully', success: true })
             return;
         }
@@ -114,7 +113,7 @@ export const deleteResume = async (req: any, res: Response) => {
 
     try {
 
-        await client.del(`Resume:${id}`);
+        // await client.del(`Resume:${id}`);
         const delet = await prisma.resume.delete({
             where: {
                 userId: id,

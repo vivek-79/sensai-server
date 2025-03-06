@@ -16,11 +16,10 @@ exports.deleteResume = exports.improveWithAi = exports.getResume = exports.saveR
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const prompts_1 = require("../gemini/prompts");
 const gemini_1 = require("../gemini");
-const redis_1 = __importDefault(require("../middleware/redis"));
+// import client from "../middleware/redis";
 const saveResume = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.userId;
     const { previewContent } = req.body;
-    console.log('resume=>', previewContent);
     try {
         const resume = yield prisma_1.default.resume.upsert({
             where: {
@@ -46,18 +45,18 @@ exports.saveResume = saveResume;
 const getResume = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.userId;
     try {
-        const cachedResume = yield redis_1.default.get(`Resume:${id}`);
-        if (cachedResume) {
-            res.status(200).json({ resume: JSON.parse(cachedResume), message: "Assessments fetched successfully", success: true });
-            return;
-        }
+        // const cachedResume = await client.get(`Resume:${id}`)
+        // if (cachedResume) {
+        //     res.status(200).json({ resume: JSON.parse(cachedResume), message: "Assessments fetched successfully", success: true });
+        //     return;
+        // }
         const resume = yield prisma_1.default.resume.findUnique({
             where: {
                 userId: id,
             }
         });
         if (resume) {
-            yield redis_1.default.setEx(`Resume:${id}`, 600, JSON.stringify(resume));
+            // await client.setEx(`Resume:${id}`, 600, JSON.stringify(resume))
             res.status(200).json({ resume, message: 'Resume fetched suuccessfully', success: true });
             return;
         }
@@ -98,7 +97,7 @@ exports.improveWithAi = improveWithAi;
 const deleteResume = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.userId;
     try {
-        yield redis_1.default.del(`Resume:${id}`);
+        // await client.del(`Resume:${id}`);
         const delet = yield prisma_1.default.resume.delete({
             where: {
                 userId: id,

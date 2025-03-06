@@ -16,7 +16,7 @@ exports.getAllAssessments = exports.saveQuizResult = exports.generateQuiz = void
 const prompts_1 = require("../gemini/prompts");
 const gemini_1 = require("../gemini");
 const prisma_1 = __importDefault(require("../lib/prisma"));
-const redis_1 = __importDefault(require("../middleware/redis"));
+// import client from "../middleware/redis";
 const generateQuiz = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.userId;
@@ -82,7 +82,7 @@ const saveQuizResult = (req, res) => __awaiter(void 0, void 0, void 0, function*
                         improvmentTip: improvementTip,
                     }
                 });
-                yield redis_1.default.del(`Assessment:${id}`);
+                // await client.del(`Assessment:${id}`)
                 res.status(201).json({ message: improvementTip, success: true });
                 return;
             }
@@ -101,11 +101,11 @@ exports.saveQuizResult = saveQuizResult;
 const getAllAssessments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.userId;
     try {
-        const cachedAssessment = yield redis_1.default.get(`Assessment:${id}`);
-        if (cachedAssessment) {
-            res.status(200).json({ data: JSON.parse(cachedAssessment), message: "Assessments fetched successfully", success: true });
-            return;
-        }
+        // const cachedAssessment = await client.get(`Assessment:${id}`)
+        // if(cachedAssessment){
+        //     res.status(200).json({ data: JSON.parse(cachedAssessment), message: "Assessments fetched successfully", success: true });
+        //     return;
+        // }
         const data = yield prisma_1.default.assessment.findMany({
             where: { userId: id },
             orderBy: { createdAt: 'asc' },
@@ -114,7 +114,7 @@ const getAllAssessments = (req, res) => __awaiter(void 0, void 0, void 0, functi
             res.status(400).json({ message: " No Assessments found", success: true });
             return;
         }
-        yield redis_1.default.setEx(`Assessment:${id}`, 600, JSON.stringify(data));
+        // await client.setEx(`Assessment:${id}`,600,JSON.stringify(data))
         res.status(200).json({ data, message: "Assessments fetched successfully", success: true });
         return;
     }

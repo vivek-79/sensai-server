@@ -16,15 +16,15 @@ exports.getIndustryInsights = exports.onBoardingSubmit = exports.getUser = void 
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const gemini_1 = require("../gemini");
 const prompts_1 = require("../gemini/prompts");
-const redis_1 = __importDefault(require("../middleware/redis"));
+// import client from "../middleware/redis";
 const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.userId;
     try {
-        const cachedUser = yield redis_1.default.get(`user:${id}`);
-        if (cachedUser) {
-            res.status(200).json({ user: JSON.parse(cachedUser), message: 'User Data Fetched (from cache)', success: true });
-            return;
-        }
+        // const cachedUser = await client.get(`user:${id}`)
+        // if(cachedUser){
+        //     res.status(200).json({ user:JSON.parse(cachedUser), message: 'User Data Fetched (from cache)', success: true })
+        //     return;
+        // }
         const user = yield prisma_1.default.user.findUnique({
             where: { id: id },
             select: {
@@ -37,7 +37,7 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(404).json({ message: "User not found", success: false });
             return;
         }
-        yield redis_1.default.setEx(`user:${id}`, 3600, JSON.stringify(user));
+        // await client.setEx(`user:${id}`,3600,JSON.stringify(user));
         res.status(200).json({ user, message: 'User Data Fetched', success: true });
         return;
     }
@@ -98,12 +98,11 @@ const getIndustryInsights = (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(400).json({ message: "No industry found", success: false });
     }
     try {
-        const cachedInsight = yield redis_1.default.get(`insight:${industry}`);
-        if (cachedInsight) {
-            res.status(200).json({ insights: JSON.parse(cachedInsight), message: "Insights fetched successfully", success: true });
-            return;
-        }
-        ;
+        // const cachedInsight = await client.get(`insight:${industry}`)
+        // if(cachedInsight){
+        //     res.status(200).json({ insights:JSON.parse(cachedInsight), message: "Insights fetched successfully", success: true });
+        //     return;
+        // };
         let insights = yield prisma_1.default.industryInsight.findUnique({
             where: { industry: industry }
         });
@@ -116,7 +115,7 @@ const getIndustryInsights = (req, res) => __awaiter(void 0, void 0, void 0, func
                 data: Object.assign(Object.assign({}, result), { industry: industry, nextUpdated: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
             });
         }
-        yield redis_1.default.setEx(`insight:${industry}`, 3600, JSON.stringify(insights));
+        // await client.setEx(`insight:${industry}`,3600,JSON.stringify(insights));
         res.status(200).json({ insights, message: "Insights fetched successfully", success: true });
         return;
     }

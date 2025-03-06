@@ -2,7 +2,7 @@ import { Response } from "express";
 import { generateQuizPrompt } from "../gemini/prompts";
 import { getAiInsight } from "../gemini";
 import prisma from "../lib/prisma";
-import client from "../middleware/redis";
+// import client from "../middleware/redis";
 
 
 
@@ -85,7 +85,7 @@ export const saveQuizResult = async (req: any, res: Response) => {
                         improvmentTip: improvementTip,
                     }
                 })
-                await client.del(`Assessment:${id}`)
+                // await client.del(`Assessment:${id}`)
                 res.status(201).json({ message: improvementTip, success: true })
                 return;
 
@@ -106,12 +106,12 @@ export const getAllAssessments = async(req:any,res:Response)=>{
 
     try {
 
-        const cachedAssessment = await client.get(`Assessment:${id}`)
+        // const cachedAssessment = await client.get(`Assessment:${id}`)
 
-        if(cachedAssessment){
-            res.status(200).json({ data: JSON.parse(cachedAssessment), message: "Assessments fetched successfully", success: true });
-            return;
-        }
+        // if(cachedAssessment){
+        //     res.status(200).json({ data: JSON.parse(cachedAssessment), message: "Assessments fetched successfully", success: true });
+        //     return;
+        // }
         const data= await prisma.assessment.findMany({
             where:{userId:id},
             orderBy:{createdAt:'asc'},
@@ -122,7 +122,7 @@ export const getAllAssessments = async(req:any,res:Response)=>{
             return;
         }
 
-        await client.setEx(`Assessment:${id}`,600,JSON.stringify(data))
+        // await client.setEx(`Assessment:${id}`,600,JSON.stringify(data))
         res.status(200).json({data,message:"Assessments fetched successfully",success:true});
         return;
     } catch (error) {
