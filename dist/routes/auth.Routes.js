@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_controller_1 = require("../controller/auth.controller");
+const limiter_1 = require("../lib/limiter");
+const authRoute = (0, express_1.Router)();
+authRoute.use((0, limiter_1.limiter)({ window: 1, limit: 5 }));
+authRoute.route('/signup').post(auth_controller_1.signup);
+authRoute.route('/signin').post(auth_controller_1.signin);
+authRoute.route('/generate-otp').post(auth_controller_1.generateOtp);
+authRoute.route('/verify-otp').post(auth_controller_1.verifyOtp);
+authRoute.route('/reset-password').post(auth_controller_1.resetPassword);
+authRoute.route('/logout').post(auth_controller_1.logout);
+exports.default = authRoute;

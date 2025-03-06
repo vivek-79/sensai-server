@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const authenticated_1 = require("../middleware/authenticated");
+const interview_controller_1 = require("../controller/interview.controller");
+const interViewRoute = (0, express_1.Router)();
+interViewRoute.use(authenticated_1.authenticateUser);
+interViewRoute.route('/get').get(interview_controller_1.generateQuiz);
+interViewRoute.route('/submit').post(interview_controller_1.saveQuizResult);
+interViewRoute.route('/getAllAssessments').post(interview_controller_1.getAllAssessments);
+exports.default = interViewRoute;
