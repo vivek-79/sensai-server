@@ -9,3 +9,6 @@ const port = constants_1.variables.port || 4000;
 app_1.default.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
+app_1.default.get('/', (req, res) => {
+    res.json({ message: "Backend is healthy" });
+});
