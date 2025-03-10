@@ -188,6 +188,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
         return;
     } catch (error:any) {
+        //error message 
         res.status(500).json({ message: error.message, success: false });
         return;
     }
