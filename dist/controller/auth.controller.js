@@ -140,7 +140,7 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     catch (error) {
-        res.status(500).json({ message: "Database error", success: false });
+        res.status(500).json({ message: error.message, success: false });
         return;
     }
 });
